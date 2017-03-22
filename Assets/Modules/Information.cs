@@ -15,6 +15,8 @@ namespace Module{
 
 		#region Information
 
+		Vector2 scrollPosition;
+
 		public override string Name {
 			get {
 				return "Information";
@@ -23,13 +25,15 @@ namespace Module{
 
 		public override string CurrentVersion {
 			get {
-				return "0.0.02";
+				return "0.0.03";
 			}
 		}
 
 		public override string VersionHistory {
 			get {
 				return
+					"Information Module :: Version 0.0.03 \n" +
+					" + Added a scroll bar for the text. \n\n" +
 					"Information Module :: Version 0.0.02 \n" +
 					" + Added 'Information' \n\n" +
 					"Information Module :: Version 0.0.01 \n" +
@@ -82,15 +86,18 @@ namespace Module{
 
 			EditorGUILayout.BeginVertical ("Box", GUILayout.ExpandHeight (true), GUILayout.ExpandWidth (true));
 			if (selectedModule != null) {
-				EditorGUI.BeginDisabledGroup (true);
-				if (versionHistory) {
-					EditorGUILayout.TextArea (selectedModule.VersionHistory);
+				using (var h = new GUILayout.VerticalScope ()) {
+					using (var scrollViewText = new GUILayout.ScrollViewScope (scrollPosition)) {
+						scrollPosition = scrollViewText.scrollPosition;
+						EditorGUI.BeginDisabledGroup (true);
+						if (versionHistory) {
+							EditorGUILayout.TextArea (selectedModule.VersionHistory);
+						} else if (information) {
+							EditorGUILayout.TextArea (selectedModule.Description);
+						}
+						EditorGUI.EndDisabledGroup ();
+					}
 				}
-				else if (information) {
-					EditorGUILayout.TextArea (selectedModule.Description);
-				}
-				EditorGUI.EndDisabledGroup ();
-
 			}
 			EditorGUILayout.EndVertical ();
 

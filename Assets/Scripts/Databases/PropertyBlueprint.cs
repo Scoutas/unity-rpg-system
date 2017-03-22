@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Database{
 	[System.Serializable]
-	public class Property : ScriptableObject {
+	public class PropertyBlueprint : ScriptableObject {
 
-		[SerializeField]List<ItemSystemEditor.Property> properties;
+		[SerializeField]List<ItemSystemEditor.PropertyBlueprint> properties;
 
 	}
 }

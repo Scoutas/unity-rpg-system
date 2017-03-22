@@ -19,13 +19,16 @@ namespace Module{
 
 		public override string CurrentVersion {
 			get {
-				return "0.0.02";
+				return "0.0.03";
 			}
 		}
 
 		public override string VersionHistory {
 			get {
-				return 	"ItemSystem Module :: Version 0.0.02 \n" +
+				return 	"ItemSystem Module :: Version 0.0.03 \n" +
+					" + Added a possibility to create property blueprints. \n    NOTE: At this point, these blueprints only have \n    functionality with strings\n" +
+					"    NOTE2: This possible will change in the future. \n\n" +
+					"ItemSystem Module :: Version 0.0.02 \n" +
 					" + Added choise between creating Properties, editing them and creating items. \n    NOTE: Still needs implementation of the functionality \n" +
 					" + Added Database creation for Properties. \n    No functionality for actually adding to these databases as of yet. \n\n" +
 					"ItemSystem Module :: Version 0.0.01 \n" +
@@ -38,8 +41,9 @@ namespace Module{
 		#endregion
 
 		ItemSystemTypes currentType = ItemSystemTypes.DEFAULT;
-		SerializedObject propertyDatabase;
+		SerializedObject propertyBlueprintDatabase;
 
+		static CreateNewPropertyWindow newPropertyWindow;
 
 
 		public ItemSystem(){
@@ -51,7 +55,7 @@ namespace Module{
 			// TODO: Move paths to their own seperate strings?
 
 			// Try to load the databases right away. 
-			Database.Property propertyDatabaseAsset = (Database.Property)AssetDatabase.LoadAssetAtPath(@"Assets/Database/PropertyDatabase.asset", typeof(Database.Property));
+			Database.PropertyBlueprint propertyDatabaseAsset = (Database.PropertyBlueprint)AssetDatabase.LoadAssetAtPath(@"Assets/Database/PropertyBlueprintDatabase.asset", typeof(Database.PropertyBlueprint));
 
 
 			// If the database didn't load, check if the folder actually exsists.
@@ -68,13 +72,15 @@ namespace Module{
 
 				// At this point, the folder Database already exsits, so all we need to do, is to create the asset
 				// and load it up into a script as a SerializedObject, for manipulation.
-				propertyDatabaseAsset = ScriptableObject.CreateInstance(typeof(Database.Property)) as Database.Property;
-				AssetDatabase.CreateAsset (propertyDatabaseAsset, @"Assets/Database/PropertyDatabase.asset");
+				propertyDatabaseAsset = ScriptableObject.CreateInstance(typeof(Database.PropertyBlueprint)) as Database.PropertyBlueprint;
+				AssetDatabase.CreateAsset (propertyDatabaseAsset, @"Assets/Database/PropertyBlueprintDatabase.asset");
 				AssetDatabase.SaveAssets ();
-				propertyDatabase = new SerializedObject (propertyDatabaseAsset);
 				Debug.Log ("Created new Database");
-
 			}
+
+			propertyBlueprintDatabase = new SerializedObject (propertyDatabaseAsset);
+			//Debug.Log ("propertyDatabase: " + propertyDatabase);
+
 
 
 
@@ -124,12 +130,60 @@ namespace Module{
 		void PropertyCreatorGUI (){
 			EditorGUILayout.LabelField ("You're in property creator");
 			if (GUILayout.Button ("Create new property")) {
-				
+				if (newPropertyWindow != null) {
+					newPropertyWindow.Focus ();
+					return;
+				}
+
+				newPropertyWindow = CreateNewPropertyWindow.Initialize (this);
+
 			}
 		}
 
+		int propertyEditorSelectedIndex = -1;
+
 		void PropertyEditorGUI (){
 			EditorGUILayout.LabelField ("You're in property editor");
+			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(200));
+			EditorGUILayout.LabelField ("Property Blueprints:", EditorStyles.boldLabel);
+			SerializedProperty nP = propertyBlueprintDatabase.FindProperty ("properties");
+			for (int i = 0; i < nP.arraySize; i++) {
+				EditorGUI.BeginDisabledGroup (i == propertyEditorSelectedIndex);
+				if (GUILayout.Button (nP.GetArrayElementAtIndex (i).FindPropertyRelative ("propertyName").stringValue)) {
+					propertyEditorSelectedIndex = i;
+				}
+				EditorGUI.EndDisabledGroup ();
+			}
+			EditorGUILayout.EndVertical ();
+			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(200));
+			string name = "All " + nP.GetArrayElementAtIndex (propertyEditorSelectedIndex).FindPropertyRelative ("propertyName").stringValue;
+			EditorGUILayout.LabelField (name, EditorStyles.boldLabel);
+
+			EditorGUILayout.EndVertical ();
+
+
+			EditorGUILayout.EndHorizontal ();
+
+		}
+
+		// TODO: In the future, the information sent into this method should be using a struct.
+		// TODO: In addition, user should be describing the names of these strings and so forth, so instead of
+		//		 using an array, I should exchange them for dictionaries, possibly.
+		public void AddNewProperty(string name, int stringCount, string[] propertyNames){
+			Debug.Log (propertyBlueprintDatabase);
+			propertyBlueprintDatabase.Update ();
+			SerializedProperty nP = propertyBlueprintDatabase.FindProperty ("properties");
+			int index = nP.arraySize;
+			nP.InsertArrayElementAtIndex (index);
+			nP.GetArrayElementAtIndex (index).FindPropertyRelative("propertyName").stringValue = name;
+			nP.GetArrayElementAtIndex (index).FindPropertyRelative ("stringCount").intValue = stringCount;
+			nP.GetArrayElementAtIndex (index).FindPropertyRelative ("attributeNames").arraySize = stringCount;
+			for (int i = 0; i < stringCount; i++) {
+				nP.GetArrayElementAtIndex (index).FindPropertyRelative ("attributeNames").GetArrayElementAtIndex(i).stringValue = propertyNames[i];
+			}
+
+			propertyBlueprintDatabase.ApplyModifiedProperties ();
 		}
 
 		void ItemEditorGUI (){
@@ -185,4 +239,57 @@ namespace Module{
 
 		
 	}
+}
+
+public class CreateNewPropertyWindow : EditorWindow {
+
+	static Module.ItemSystem parent;
+	static CreateNewPropertyWindow window;
+	ItemSystemEditor.PropertyBlueprint newBlueprint;
+
+	void OnGUI(){
+		newBlueprint.propertyName = EditorGUILayout.TextField ("Property name: ", newBlueprint.propertyName);
+		newBlueprint.hasStrings = EditorGUILayout.Toggle ("Has strings", newBlueprint.hasStrings );
+		if(newBlueprint.hasStrings){
+			newBlueprint.stringCount = EditorGUILayout.IntField ("String Count: ", newBlueprint.stringCount);
+		}
+		// TODO: Do I actually need integer counts?
+		if(newBlueprint.hasIntegers){
+			newBlueprint.stringCount = EditorGUILayout.IntField ("String Count: ", newBlueprint.stringCount);
+		}
+
+		if (GUILayout.Button ("Add New Property")) {
+			if (stringCount == null || hasStrings == false) {
+				stringCount = 0;
+			}
+			parent.AddNewProperty (name, stringCount, propertyNames);
+			window.Close ();
+		}
+		if (GUILayout.Button ("Cancel")) {
+			window.Close ();
+		}
+	}
+
+	#region Initialization
+	public static CreateNewPropertyWindow Initialize(Module.ItemSystem _parent){
+		ParentSetup (_parent);
+		window = EditorWindow.GetWindow (typeof(CreateNewPropertyWindow)) as CreateNewPropertyWindow;
+		return window;
+	}
+
+	static void ParentSetup(Module.ItemSystem _parent){
+		if (parent == null) {
+			parent = _parent;
+		} else {
+			if (parent.Equals (_parent)) {
+				Debug.Log ("Correct parent is already set");
+			} 
+			else {
+				Debug.LogError ("Parent sent in to initialization is different from already assigned parent. Will assign new parent!");
+				parent = _parent;
+			}
+		}
+	}
+	#endregion
+
 }
