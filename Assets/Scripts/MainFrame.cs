@@ -13,14 +13,18 @@ public class MainFrame : EditorWindow {
 	Editor.Module currentActiveModule;
 	static MainFrame window;
 
-	int selectedModuleIndex = 0;
+	// This should display the mainframe options, for now it only displays buttons
+	// that are used to switch between different modules. 
 
 	void OnGUI(){
+		
 		EditorGUILayout.BeginHorizontal ();
 		foreach (Editor.Module module in loadedModules) {
+			EditorGUI.BeginDisabledGroup (module == currentActiveModule);
 			if (GUILayout.Button (module.Name)) {
 				currentActiveModule = module;
 			}
+			EditorGUI.EndDisabledGroup ();
 		}
 		EditorGUILayout.EndHorizontal ();
 

@@ -7,13 +7,16 @@ namespace Editor{
 
 		public MainFrame Mainframe { get; private set;}
 
-		public virtual string Name {get;}
-		public virtual string Version {get;}
+		public virtual string Name 			 {get;}
+		public virtual string Description 	 {get;}
+		public virtual string CurrentVersion {get;}
+		public virtual string VersionHistory {get;}
 
 		public virtual void Main()
 		{
 			
 		}
+			
 
 		public bool SetMainframe(MainFrame mainframe){
 			if (Mainframe != null) {
