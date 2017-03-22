@@ -7,6 +7,12 @@ namespace Module{
 	
 	public class Information : Editor.Module {
 
+		// TODO: Add settings, to each module here?
+		// e.g. You're in the Information module and you do the cool checks
+		// 		you would actually have an option of choosing to open options
+		//		where you could configure different things inside the modules
+		//		like the names of the databases and etc.
+
 		#region Information
 
 		public override string Name {
@@ -25,7 +31,7 @@ namespace Module{
 			get {
 				return
 					"Information Module :: Version 0.0.02 \n" +
-					" + Added 'Information' \n" +
+					" + Added 'Information' \n\n" +
 					"Information Module :: Version 0.0.01 \n" +
 						" + Added 'Version History' \n" +
 						" + Initial setup";
@@ -91,14 +97,7 @@ namespace Module{
 			EditorGUILayout.EndHorizontal ();
 
 		}
-
-		void SelectModule(Editor.Module module){
-			selectedModule = module;
-		}
-
-
-
-
+			
 		
 	}
 }

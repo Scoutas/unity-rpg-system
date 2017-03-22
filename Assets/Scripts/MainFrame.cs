@@ -68,10 +68,10 @@ public class MainFrame : EditorWindow {
 		foreach (Type moduleType in FindDerivedTypes<Editor.Module>()) {
 			Editor.Module moduleInstance = moduleType.GetConstructors () [0].Invoke (new object[0]) as Editor.Module;
 			moduleInstance.SetMainframe (this);
-			Debug.Log ("Loaded module: " + moduleInstance.ToString ().Split (new char[]{ '.' }) [1]);
+			//Debug.Log ("Loaded module: " + moduleInstance.ToString ().Split (new char[]{ '.' }) [1]);
 			loadedModules.Add (moduleInstance);
 		}
-		Debug.Log ("Total loaded modules: " + loadedModules.Count);
+		//Debug.Log ("Total loaded modules: " + loadedModules.Count);
 	}
 
 	#endregion
