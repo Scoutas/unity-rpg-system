@@ -8,14 +8,8 @@ namespace ItemSystemEditor{
 
 		[SerializeField]public string propertyName;
 
-		// These dictionaries hold information about the 
-		// attributes that the property itself has.
-		// The TKey should always be an int, because
-		// it's the ID that the user sets for it.
-
-		// The TValue should have each type that you might need. 
-		//[SerializeField]Dictionary<int, string> stringDict = new Dictionary<int, string>();
-		//[SerializeField]public DictionaryOfIntAndInt intAndIntDictionary;
+		[SerializeField]public List<string> stringValues = new List<string>();
+		[SerializeField]public List<int> intValues = new List<int> ();
 		
 	}
 }
@@ -23,35 +17,4 @@ namespace ItemSystemEditor{
 
 
 
-//[System.Serializable]
-//public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver {
-//	[SerializeField]
-//	public List<TKey> keys = new List<TKey>();
-//
-//	[SerializeField]
-//	public List<TValue> values = new List<TValue>();
-//
-//	// save the dictionary to lists
-//	public void OnBeforeSerialize()
-//	{
-//		keys.Clear();
-//		values.Clear();
-//		foreach(KeyValuePair<TKey, TValue> pair in this)
-//		{
-//			keys.Add(pair.Key);
-//			values.Add(pair.Value);
-//		}
-//	}
-//
-//	// load dictionary from lists
-//	public void OnAfterDeserialize()
-//	{
-//		this.Clear();
-//
-//		if(keys.Count != values.Count)
-//			throw new System.Exception(string.Format("there are {0} keys and {1} values after deserialization. Make sure that both key and value types are serializable."));
-//
-//		for(int i = 0; i < keys.Count; i++)
-//			this.Add(keys[i], values[i]);
-//	}
-//}
+

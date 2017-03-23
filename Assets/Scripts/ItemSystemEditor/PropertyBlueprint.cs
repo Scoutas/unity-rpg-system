@@ -34,6 +34,12 @@ namespace ItemSystemEditor {
 //		[SerializeField] public int stringCount;
 //		[SerializeField] public int integerCount;
 		// ARRAYS
+
+
+		// FIXME: FOR NOW THE IMPLEMENTATION OF ADDING NEW PROPERTIES USING A BLUEPRING
+		// MAKES AN ASSUMPTION THAT EXTERNAL ID'S ARE THE SAME AS THE INDEXING INSIDE
+		// OF A LIST
+
 		[SerializeField] public List<Attribute> attributes;
 
 
@@ -43,7 +49,12 @@ namespace ItemSystemEditor {
 [System.Serializable]
 public class Attribute {
 
-	[SerializeField] public int ID;
+	// This ID is used for display purposes. 
+	[SerializeField] public int ExtrernalID;
+
+	// This ID is used for storing objects correctly in their own arrays.
+	[SerializeField] public int InternalID;
+
 	[SerializeField] public string Name;
 	// TODO: Maybe change it to an actual type? Figure out how to implement that shizz.
 	[SerializeField] public string Type;

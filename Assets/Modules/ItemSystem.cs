@@ -3,6 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+// TODO: REFACTOR THIS CONVOLUTED SHIT OF A CODE!!!!
+
+
 namespace Module{
 
 	enum ItemSystemTypes { DEFAULT, PROPERTY_CREATOR, PROPERTY_EDITOR, ITEM_EDITOR};
@@ -19,13 +34,16 @@ namespace Module{
 
 		public override string CurrentVersion {
 			get {
-				return "0.0.03";
+				return "0.0.04";
 			}
 		}
 
 		public override string VersionHistory {
 			get {
-				return 	"ItemSystem Module :: Version 0.0.03 \n" +
+				return 	"ItemSystem Module :: Version 0.0.04 \n" +
+					" + Code currently is a convoluted mess, but we're getting closer to a really simple, \n" +
+					"   implementation of creating property blueprints and creating actual properties using them. \n\n" +
+					"ItemSystem Module :: Version 0.0.03 \n" +
 					" + Added a possibility to create property blueprints. \n    NOTE: At this point, these blueprints only have \n    functionality with strings\n" +
 					"    NOTE2: This possible will change in the future. \n\n" +
 					"ItemSystem Module :: Version 0.0.02 \n" +
@@ -43,9 +61,10 @@ namespace Module{
 		ItemSystemTypes currentType = ItemSystemTypes.DEFAULT;
 		Database.PropertyDatabase propertyDatabaseAsset;
 		Database.PropertyBlueprint propertyBlueprintDatabaseAsset;
-		SerializedObject propertyBlueprintDatabase;
-		SerializedObject propertyDatabase;
+		public SerializedObject propertyBlueprintDatabase;
+		public SerializedObject propertyDatabase;
 
+		static CreateNewBlueprintWindow newBlueprintWindow;
 		static CreateNewPropertyWindow newPropertyWindow;
 
 
@@ -158,51 +177,68 @@ namespace Module{
 		void PropertyCreatorGUI (){
 			EditorGUILayout.LabelField ("You're in property creator");
 			if (GUILayout.Button ("Create new property")) {
-				if (newPropertyWindow != null) {
-					newPropertyWindow.Focus ();
+				if (newBlueprintWindow != null) {
+					newBlueprintWindow.Focus ();
 					return;
 				}
 
-				newPropertyWindow = CreateNewPropertyWindow.Initialize (this);
+				newBlueprintWindow = CreateNewBlueprintWindow.Initialize (this);
 
 			}
 		}
 
-		int propertyEditorSelectedIndex = -1;
+		public int propertyEditorSelectedIndex = -1;
 
 		void PropertyEditorGUI (){
 			EditorGUILayout.LabelField ("You're in property editor");
 			EditorGUILayout.BeginHorizontal ();
 			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(200));
 			EditorGUILayout.LabelField ("Property Blueprints:", EditorStyles.boldLabel);
-			SerializedProperty nP = propertyBlueprintDatabase.FindProperty ("propertyBlueprintList");
-			for (int i = 0; i < nP.arraySize; i++) {
+			SerializedProperty blueprintList = propertyBlueprintDatabase.FindProperty ("propertyBlueprintList");
+			for (int i = 0; i < blueprintList.arraySize; i++) {
 				EditorGUI.BeginDisabledGroup (i == propertyEditorSelectedIndex);
-				if (GUILayout.Button (nP.GetArrayElementAtIndex (i).FindPropertyRelative ("propertyName").stringValue)) {
+				if (GUILayout.Button (blueprintList.GetArrayElementAtIndex (i).FindPropertyRelative ("propertyName").stringValue)) {
 					propertyEditorSelectedIndex = i;
 				}
 				EditorGUI.EndDisabledGroup ();
 			}
 			EditorGUILayout.EndVertical ();
+
+
 			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(200));
 			string name = "null";
+			SerializedProperty selectedBlueprint = blueprintList.GetArrayElementAtIndex (propertyEditorSelectedIndex);
 			if (propertyEditorSelectedIndex != -1) {
-				name = "All " + nP.GetArrayElementAtIndex (propertyEditorSelectedIndex).FindPropertyRelative ("propertyName").stringValue;
+				name = "All " + selectedBlueprint.FindPropertyRelative ("propertyName").stringValue;
 			}
 			EditorGUILayout.BeginHorizontal ();
 			EditorGUILayout.LabelField (name, EditorStyles.boldLabel);
-			if (GUILayout.Button ("Test")) {
-
-
-				SerializedProperty dictionary = propertyDatabase.FindProperty ("intAndIntDictionary");
-				Debug.Log(dictionary.FindPropertyRelative ("_Keys").arraySize);
-
-
-
-
+			if(GUILayout.Button("Add")){
+				if (newPropertyWindow != null) {
+					newPropertyWindow.Focus ();
+					return;
+				}
+				newPropertyWindow = CreateNewPropertyWindow.Initialize (this);
 
 			}
 			EditorGUILayout.EndHorizontal ();
+			// FIXME: THIS IMPLEMENTATION SHOULD BE COMPLETELY DIFFERENT HERE.
+			SerializedProperty propertyList = propertyDatabase.FindProperty ("propertyList");
+			for (int i = 0; i < propertyList.arraySize; i++) {
+				SerializedProperty attribute = selectedBlueprint.FindPropertyRelative ("attributes").GetArrayElementAtIndex (0);
+				string typeOfBlueprint = attribute.FindPropertyRelative ("Type").stringValue;
+				int internalID = attribute.FindPropertyRelative ("InternalID").intValue;
+				SerializedProperty thingToDisplay = propertyList.GetArrayElementAtIndex (i).FindPropertyRelative (typeOfBlueprint + "Values").GetArrayElementAtIndex (internalID);
+				switch (typeOfBlueprint) {
+				case "string":
+					EditorGUILayout.LabelField (thingToDisplay.stringValue);
+					break;
+				case "int":
+					EditorGUILayout.LabelField (thingToDisplay.intValue.ToString());
+					break;
+				}
+			}
+
 			EditorGUILayout.EndVertical ();
 
 
@@ -213,7 +249,7 @@ namespace Module{
 		// TODO: In the future, the information sent into this method should be using a struct.
 		// TODO: In addition, user should be describing the names of these strings and so forth, so instead of
 		//		 using an array, I should exchange them for dictionaries, possibly.
-		public void AddNewProperty(ItemSystemEditor.PropertyBlueprint blueprint){
+		public void AddNewBlueprint(ItemSystemEditor.PropertyBlueprint blueprint){
 			propertyBlueprintDatabase.Update ();
 
 			SerializedProperty blueprintList = propertyBlueprintDatabase.FindProperty ("propertyBlueprintList");
@@ -223,8 +259,11 @@ namespace Module{
 			blueprintList.GetArrayElementAtIndex (index).FindPropertyRelative ("propertyName").stringValue = blueprint.propertyName;
 			SerializedProperty attributes = blueprintList.GetArrayElementAtIndex (index).FindPropertyRelative ("attributes");
 			attributes.arraySize = blueprint.attributes.Count;
+			CalculateInternalID (ref blueprint);
 			for (int i = 0; i < attributes.arraySize; i++) {
-				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("ID").intValue = blueprint.attributes [i].ID;
+				// Shouldn't allow to change them really easily, should allow only to change their positions.
+				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("ExtrernalID").intValue = blueprint.attributes [i].ExtrernalID;
+				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("InternalID").intValue = blueprint.attributes [i].InternalID;
 				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("Name").stringValue = blueprint.attributes [i].Name;
 				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("Type").stringValue = blueprint.attributes [i].Type;
 			}
@@ -232,9 +271,61 @@ namespace Module{
 			propertyBlueprintDatabase.ApplyModifiedProperties ();
 		}
 
+		public void AddNewProperty (ItemSystemEditor.Property sentInProperty){
+			propertyDatabase.Update ();
+			SerializedProperty currentBlueprint = propertyBlueprintDatabase.FindProperty ("propertyBlueprintList").GetArrayElementAtIndex (propertyEditorSelectedIndex);
+			SerializedProperty attributes = currentBlueprint.FindPropertyRelative ("attributes");
+
+			SerializedProperty propertyList = propertyDatabase.FindProperty ("propertyList");
+			int indexOfNewProperty = propertyList.arraySize;
+			propertyList.InsertArrayElementAtIndex (indexOfNewProperty);
+			SerializedProperty newProperty = propertyList.GetArrayElementAtIndex (indexOfNewProperty);
+			newProperty.FindPropertyRelative ("propertyName").stringValue = sentInProperty.propertyName;
+			for (int i = 0; i < attributes.arraySize; i++) {
+				SerializedProperty currentAttribute = attributes.GetArrayElementAtIndex (i);
+				int CAIID = currentAttribute.FindPropertyRelative ("InternalID").intValue;
+				string CAName = currentAttribute.FindPropertyRelative ("Name").stringValue;
+				string CAType = currentAttribute.FindPropertyRelative ("Type").stringValue;
+
+				switch (CAType) {
+				case "string":
+					newProperty.FindPropertyRelative ("stringValues").InsertArrayElementAtIndex (CAIID);
+					newProperty.FindPropertyRelative ("stringValues").GetArrayElementAtIndex (CAIID).stringValue = sentInProperty.stringValues[CAIID];
+					break;
+				case "int":
+					newProperty.FindPropertyRelative ("intValues").InsertArrayElementAtIndex (CAIID);
+					newProperty.FindPropertyRelative ("intValues").GetArrayElementAtIndex (CAIID).intValue = sentInProperty.intValues[CAIID];
+					break;
+				}
+
+			}
+			propertyDatabase.ApplyModifiedProperties ();
+		}
+
 		void ItemEditorGUI (){
 			EditorGUILayout.LabelField ("You're in item creator");
 		}
+
+		void CalculateInternalID(ref ItemSystemEditor.PropertyBlueprint blueprint){
+			int stringCounter = 0;
+			int intCounter = 0;
+
+			for (int i = 0; i < blueprint.attributes.Count; i++) {
+				string Type = blueprint.attributes [i].Type;
+
+				switch (Type) {
+				case "string":
+					blueprint.attributes [i].InternalID = stringCounter;
+					stringCounter++;
+					break;
+				case "int":
+					blueprint.attributes [i].InternalID = intCounter;
+					intCounter++;
+					break;
+				}
+			}
+		}
+
 
 
 
@@ -287,10 +378,10 @@ namespace Module{
 	}
 }
 
-public class CreateNewPropertyWindow : EditorWindow {
+public class CreateNewBlueprintWindow : EditorWindow {
 
 	static Module.ItemSystem parent;
-	static CreateNewPropertyWindow window;
+	static CreateNewBlueprintWindow window;
 	ItemSystemEditor.PropertyBlueprint newBlueprint;
 
 	void OnGUI(){
@@ -307,44 +398,105 @@ public class CreateNewPropertyWindow : EditorWindow {
 		for (int i = 0; i < newBlueprint.attributes.Count; i++) {
 			EditorGUILayout.LabelField (i.ToString (), EditorStyles.boldLabel);
 			Attribute currAtt = newBlueprint.attributes [i];
-			currAtt.ID = EditorGUILayout.IntField ("ID: ", currAtt.ID);
+			currAtt.ExtrernalID = EditorGUILayout.IntField ("ID: ", currAtt.ExtrernalID);
 			currAtt.Name = EditorGUILayout.TextField ("Name: ", currAtt.Name);
 			currAtt.Type = EditorGUILayout.TextField ("Type: ", currAtt.Type);
 			newBlueprint.attributes [i] = currAtt;
 		}
 
 		if (GUILayout.Button ("Finish")) {
-			parent.AddNewProperty (newBlueprint);
+			parent.AddNewBlueprint (newBlueprint);
 			window.Close ();
 		}
 
-
-//		newBlueprint.hasStrings = EditorGUILayout.Toggle ("Has strings", newBlueprint.hasStrings );
-//		newBlueprint.hasIntegers = EditorGUILayout.Toggle ("Has integers", newBlueprint.hasIntegers );
-//
-//		if(newBlueprint.hasStrings){
-//			newBlueprint.stringCount = EditorGUILayout.IntField ("String Count: ", newBlueprint.stringCount);
-//			for (int i = 0; i < newBlueprint.stringCount; i++) {
-//				
-//			}
-//		}
-//
-//		if(newBlueprint.hasIntegers){
-//			newBlueprint.integerCount = EditorGUILayout.IntField ("Integer Count: ", newBlueprint.integerCount);
-//		}
-
-
-
-//		if (GUILayout.Button ("Add New Property")) {
-//			if (stringCount == null || hasStrings == false) {
-//				stringCount = 0;
-//			}
-//			parent.AddNewProperty (name, stringCount, propertyNames);
-//			window.Close ();
-//		}
 		if (GUILayout.Button ("Cancel")) {
 			window.Close ();
 		}
+	}
+
+	#region Initialization
+	public static CreateNewBlueprintWindow Initialize(Module.ItemSystem _parent){
+		ParentSetup (_parent);
+		window = EditorWindow.GetWindow (typeof(CreateNewBlueprintWindow)) as CreateNewBlueprintWindow;
+		return window;
+	}
+
+	static void ParentSetup(Module.ItemSystem _parent){
+		if (parent == null) {
+			parent = _parent;
+		} else {
+			if (parent.Equals (_parent)) {
+				Debug.Log ("Correct parent is already set");
+			} 
+			else {
+				Debug.LogError ("Parent sent in to initialization is different from already assigned parent. Will assign new parent!");
+				parent = _parent;
+			}
+		}
+	}
+	#endregion
+
+}
+
+
+public class CreateNewPropertyWindow : EditorWindow {
+
+	static Module.ItemSystem parent;
+	static CreateNewPropertyWindow window;
+	ItemSystemEditor.Property newProperty;
+
+	SerializedProperty currentBlueprint;
+	SerializedProperty attributes;
+
+	void OnGUI(){
+
+		if (currentBlueprint == null) {
+			currentBlueprint = parent.propertyBlueprintDatabase.FindProperty ("propertyBlueprintList").GetArrayElementAtIndex (parent.propertyEditorSelectedIndex);
+		}
+
+		if (attributes == null) {
+			attributes = currentBlueprint.FindPropertyRelative ("attributes");
+		}
+
+		if (newProperty == null) {
+			newProperty = new ItemSystemEditor.Property ();
+			newProperty.propertyName = currentBlueprint.FindPropertyRelative ("propertyName").stringValue;
+		}
+
+		for (int i = 0; i < attributes.arraySize; i++) {
+			SerializedProperty currentAttribute = attributes.GetArrayElementAtIndex (i);
+			int CAIID = currentAttribute.FindPropertyRelative ("InternalID").intValue;
+			string CAName = currentAttribute.FindPropertyRelative ("Name").stringValue;
+			string CAType = currentAttribute.FindPropertyRelative ("Type").stringValue;
+
+			switch (CAType) {
+			case "string":
+				if (newProperty.stringValues.Count <= CAIID) {
+					newProperty.stringValues.Insert (CAIID, "");
+				}
+				newProperty.stringValues [CAIID] = EditorGUILayout.TextField(CAName, newProperty.stringValues [CAIID]);
+				break;
+			case "int":
+				if (newProperty.intValues.Count <= CAIID) {
+					newProperty.intValues.Insert (CAIID, 0);
+				}
+				newProperty.intValues [CAIID] = EditorGUILayout.IntField(CAName, newProperty.intValues [CAIID]);
+				break;
+			}
+
+		}
+		 
+
+		if (GUILayout.Button ("Finish")) {
+			parent.AddNewProperty (newProperty);
+			window.Close ();
+		}
+
+		if (GUILayout.Button ("Cancel")) {
+			window.Close ();
+		}
+
+
 	}
 
 	#region Initialization
@@ -370,4 +522,3 @@ public class CreateNewPropertyWindow : EditorWindow {
 	#endregion
 
 }
-

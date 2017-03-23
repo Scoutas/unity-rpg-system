@@ -6,7 +6,6 @@ namespace Database{
 	public class PropertyDatabase : ScriptableObject {
 
 		[SerializeField]public List<ItemSystemEditor.Property> propertyList;
-		[SerializeField]public DictionaryOfIntAndInt intAndIntDictionary;
 
 	}
 }
