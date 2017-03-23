@@ -7,7 +7,7 @@ namespace Database{
 	[System.Serializable]
 	public class PropertyBlueprint : ScriptableObject {
 
-		[SerializeField]List<ItemSystemEditor.PropertyBlueprint> properties;
+		[SerializeField]public List<ItemSystemEditor.PropertyBlueprint> propertyBlueprintList;
 
 	}
 }

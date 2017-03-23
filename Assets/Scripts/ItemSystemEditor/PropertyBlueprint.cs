@@ -26,21 +26,27 @@ namespace ItemSystemEditor {
 		// NAME
 		[SerializeField] public string propertyName;
 
-		// BOOLEANS
-		[SerializeField] public bool hasStrings;
-		[SerializeField] public bool hasIntegers;
-
-		// COUNTS
-		[SerializeField] public int stringCount;
-		[SerializeField] public int integerCount;
-
+//		// BOOLEANS
+//		[SerializeField] public bool hasStrings;
+//		[SerializeField] public bool hasIntegers;
+//
+//		// COUNTS
+//		[SerializeField] public int stringCount;
+//		[SerializeField] public int integerCount;
 		// ARRAYS
-		[SerializeField] public string[] attributeNames;
-		[SerializeField] public string[] attributeTypes;
+		[SerializeField] public List<Attribute> attributes;
 
 
 
 	}
 }
+[System.Serializable]
+public class Attribute {
 
+	[SerializeField] public int ID;
+	[SerializeField] public string Name;
+	// TODO: Maybe change it to an actual type? Figure out how to implement that shizz.
+	[SerializeField] public string Type;
+
+}
 

@@ -41,7 +41,10 @@ namespace Module{
 		#endregion
 
 		ItemSystemTypes currentType = ItemSystemTypes.DEFAULT;
+		Database.PropertyDatabase propertyDatabaseAsset;
+		Database.PropertyBlueprint propertyBlueprintDatabaseAsset;
 		SerializedObject propertyBlueprintDatabase;
+		SerializedObject propertyDatabase;
 
 		static CreateNewPropertyWindow newPropertyWindow;
 
@@ -55,11 +58,35 @@ namespace Module{
 			// TODO: Move paths to their own seperate strings?
 
 			// Try to load the databases right away. 
-			Database.PropertyBlueprint propertyDatabaseAsset = (Database.PropertyBlueprint)AssetDatabase.LoadAssetAtPath(@"Assets/Database/PropertyBlueprintDatabase.asset", typeof(Database.PropertyBlueprint));
-
+			propertyBlueprintDatabaseAsset = 
+				(Database.PropertyBlueprint)AssetDatabase.LoadAssetAtPath(@"Assets/Database/PropertyBlueprintDatabase.asset", typeof(Database.PropertyBlueprint));
+			
+			propertyDatabaseAsset = 
+				(Database.PropertyDatabase)AssetDatabase.LoadAssetAtPath(@"Assets/Database/PropertyDatabase.asset", typeof(Database.PropertyDatabase));
 
 			// If the database didn't load, check if the folder actually exsists.
 
+
+			// TODO: Make this a generic method.
+			if (propertyBlueprintDatabaseAsset == null) {
+				bool created = false;
+				Debug.Log ("Checking if Database folder already exists.");
+				if (AssetDatabase.IsValidFolder (@"Assets/Database") == false) {
+					created = true;
+					AssetDatabase.CreateFolder (@"Assets", @"Database");
+
+				}
+				Debug.Log ("Does it already exist? " + !created);
+
+				// At this point, the folder Database already exsits, so all we need to do, is to create the asset
+				// and load it up into a script as a SerializedObject, for manipulation.
+				propertyBlueprintDatabaseAsset = ScriptableObject.CreateInstance(typeof(Database.PropertyBlueprint)) as Database.PropertyBlueprint;
+				AssetDatabase.CreateAsset (propertyBlueprintDatabaseAsset, @"Assets/Database/PropertyBlueprintDatabase.asset");
+				AssetDatabase.SaveAssets ();
+				Debug.Log ("Created new Database" + propertyBlueprintDatabaseAsset.name);
+			}
+
+			// TODO: Make this a generic method.
 			if (propertyDatabaseAsset == null) {
 				bool created = false;
 				Debug.Log ("Checking if Database folder already exists.");
@@ -72,13 +99,14 @@ namespace Module{
 
 				// At this point, the folder Database already exsits, so all we need to do, is to create the asset
 				// and load it up into a script as a SerializedObject, for manipulation.
-				propertyDatabaseAsset = ScriptableObject.CreateInstance(typeof(Database.PropertyBlueprint)) as Database.PropertyBlueprint;
-				AssetDatabase.CreateAsset (propertyDatabaseAsset, @"Assets/Database/PropertyBlueprintDatabase.asset");
+				propertyDatabaseAsset = ScriptableObject.CreateInstance(typeof(Database.PropertyDatabase)) as Database.PropertyDatabase;
+				AssetDatabase.CreateAsset (propertyDatabaseAsset, @"Assets/Database/PropertyDatabase.asset");
 				AssetDatabase.SaveAssets ();
-				Debug.Log ("Created new Database");
+				Debug.Log ("Created new Database" + propertyDatabaseAsset.name);
 			}
 
-			propertyBlueprintDatabase = new SerializedObject (propertyDatabaseAsset);
+			propertyBlueprintDatabase = new SerializedObject (propertyBlueprintDatabaseAsset);
+			propertyDatabase = new SerializedObject (propertyDatabaseAsset);
 			//Debug.Log ("propertyDatabase: " + propertyDatabase);
 
 
@@ -147,7 +175,7 @@ namespace Module{
 			EditorGUILayout.BeginHorizontal ();
 			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(200));
 			EditorGUILayout.LabelField ("Property Blueprints:", EditorStyles.boldLabel);
-			SerializedProperty nP = propertyBlueprintDatabase.FindProperty ("properties");
+			SerializedProperty nP = propertyBlueprintDatabase.FindProperty ("propertyBlueprintList");
 			for (int i = 0; i < nP.arraySize; i++) {
 				EditorGUI.BeginDisabledGroup (i == propertyEditorSelectedIndex);
 				if (GUILayout.Button (nP.GetArrayElementAtIndex (i).FindPropertyRelative ("propertyName").stringValue)) {
@@ -157,9 +185,24 @@ namespace Module{
 			}
 			EditorGUILayout.EndVertical ();
 			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(200));
-			string name = "All " + nP.GetArrayElementAtIndex (propertyEditorSelectedIndex).FindPropertyRelative ("propertyName").stringValue;
+			string name = "null";
+			if (propertyEditorSelectedIndex != -1) {
+				name = "All " + nP.GetArrayElementAtIndex (propertyEditorSelectedIndex).FindPropertyRelative ("propertyName").stringValue;
+			}
+			EditorGUILayout.BeginHorizontal ();
 			EditorGUILayout.LabelField (name, EditorStyles.boldLabel);
+			if (GUILayout.Button ("Test")) {
 
+
+				SerializedProperty dictionary = propertyDatabase.FindProperty ("intAndIntDictionary");
+				Debug.Log(dictionary.FindPropertyRelative ("_Keys").arraySize);
+
+
+
+
+
+			}
+			EditorGUILayout.EndHorizontal ();
 			EditorGUILayout.EndVertical ();
 
 
@@ -170,17 +213,20 @@ namespace Module{
 		// TODO: In the future, the information sent into this method should be using a struct.
 		// TODO: In addition, user should be describing the names of these strings and so forth, so instead of
 		//		 using an array, I should exchange them for dictionaries, possibly.
-		public void AddNewProperty(string name, int stringCount, string[] propertyNames){
-			Debug.Log (propertyBlueprintDatabase);
+		public void AddNewProperty(ItemSystemEditor.PropertyBlueprint blueprint){
 			propertyBlueprintDatabase.Update ();
-			SerializedProperty nP = propertyBlueprintDatabase.FindProperty ("properties");
-			int index = nP.arraySize;
-			nP.InsertArrayElementAtIndex (index);
-			nP.GetArrayElementAtIndex (index).FindPropertyRelative("propertyName").stringValue = name;
-			nP.GetArrayElementAtIndex (index).FindPropertyRelative ("stringCount").intValue = stringCount;
-			nP.GetArrayElementAtIndex (index).FindPropertyRelative ("attributeNames").arraySize = stringCount;
-			for (int i = 0; i < stringCount; i++) {
-				nP.GetArrayElementAtIndex (index).FindPropertyRelative ("attributeNames").GetArrayElementAtIndex(i).stringValue = propertyNames[i];
+
+			SerializedProperty blueprintList = propertyBlueprintDatabase.FindProperty ("propertyBlueprintList");
+
+			int index = blueprintList.arraySize;
+			blueprintList.InsertArrayElementAtIndex (index);
+			blueprintList.GetArrayElementAtIndex (index).FindPropertyRelative ("propertyName").stringValue = blueprint.propertyName;
+			SerializedProperty attributes = blueprintList.GetArrayElementAtIndex (index).FindPropertyRelative ("attributes");
+			attributes.arraySize = blueprint.attributes.Count;
+			for (int i = 0; i < attributes.arraySize; i++) {
+				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("ID").intValue = blueprint.attributes [i].ID;
+				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("Name").stringValue = blueprint.attributes [i].Name;
+				attributes.GetArrayElementAtIndex (i).FindPropertyRelative ("Type").stringValue = blueprint.attributes [i].Type;
 			}
 
 			propertyBlueprintDatabase.ApplyModifiedProperties ();
@@ -248,23 +294,54 @@ public class CreateNewPropertyWindow : EditorWindow {
 	ItemSystemEditor.PropertyBlueprint newBlueprint;
 
 	void OnGUI(){
-		newBlueprint.propertyName = EditorGUILayout.TextField ("Property name: ", newBlueprint.propertyName);
-		newBlueprint.hasStrings = EditorGUILayout.Toggle ("Has strings", newBlueprint.hasStrings );
-		if(newBlueprint.hasStrings){
-			newBlueprint.stringCount = EditorGUILayout.IntField ("String Count: ", newBlueprint.stringCount);
+		if (newBlueprint == null) {
+			newBlueprint = new ItemSystemEditor.PropertyBlueprint ();
+			newBlueprint.attributes = new List<Attribute> ();
 		}
-		// TODO: Do I actually need integer counts?
-		if(newBlueprint.hasIntegers){
-			newBlueprint.stringCount = EditorGUILayout.IntField ("String Count: ", newBlueprint.stringCount);
+		newBlueprint.propertyName = EditorGUILayout.TextField ("Property name: ", newBlueprint.propertyName);
+
+		if (GUILayout.Button ("Add new attribute")) {
+			newBlueprint.attributes.Add (new Attribute ());
 		}
 
-		if (GUILayout.Button ("Add New Property")) {
-			if (stringCount == null || hasStrings == false) {
-				stringCount = 0;
-			}
-			parent.AddNewProperty (name, stringCount, propertyNames);
+		for (int i = 0; i < newBlueprint.attributes.Count; i++) {
+			EditorGUILayout.LabelField (i.ToString (), EditorStyles.boldLabel);
+			Attribute currAtt = newBlueprint.attributes [i];
+			currAtt.ID = EditorGUILayout.IntField ("ID: ", currAtt.ID);
+			currAtt.Name = EditorGUILayout.TextField ("Name: ", currAtt.Name);
+			currAtt.Type = EditorGUILayout.TextField ("Type: ", currAtt.Type);
+			newBlueprint.attributes [i] = currAtt;
+		}
+
+		if (GUILayout.Button ("Finish")) {
+			parent.AddNewProperty (newBlueprint);
 			window.Close ();
 		}
+
+
+//		newBlueprint.hasStrings = EditorGUILayout.Toggle ("Has strings", newBlueprint.hasStrings );
+//		newBlueprint.hasIntegers = EditorGUILayout.Toggle ("Has integers", newBlueprint.hasIntegers );
+//
+//		if(newBlueprint.hasStrings){
+//			newBlueprint.stringCount = EditorGUILayout.IntField ("String Count: ", newBlueprint.stringCount);
+//			for (int i = 0; i < newBlueprint.stringCount; i++) {
+//				
+//			}
+//		}
+//
+//		if(newBlueprint.hasIntegers){
+//			newBlueprint.integerCount = EditorGUILayout.IntField ("Integer Count: ", newBlueprint.integerCount);
+//		}
+
+
+
+//		if (GUILayout.Button ("Add New Property")) {
+//			if (stringCount == null || hasStrings == false) {
+//				stringCount = 0;
+//			}
+//			parent.AddNewProperty (name, stringCount, propertyNames);
+//			window.Close ();
+//		}
 		if (GUILayout.Button ("Cancel")) {
 			window.Close ();
 		}
@@ -293,3 +370,4 @@ public class CreateNewPropertyWindow : EditorWindow {
 	#endregion
 
 }
+
