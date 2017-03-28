@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Editor{
-	public class Module {
+namespace RPSystem{
+	public class MainframeModule {
 
 		public MainFrame Mainframe { get; private set;}
 
@@ -19,13 +19,11 @@ namespace Editor{
 		}
 			
 
-		public bool SetMainframe(MainFrame mainframe){
+		public void SetMainframe(MainFrame mainframe){
 			if (Mainframe != null) {
-				Debug.LogError ("Mainframe parent of module " + Name + " has already been set. Could you possibly have several copies of a module?");
-				return false;
+				Debug.LogWarning ("Mainframe parent of module " + Name + " has already been set. Could you possibly have several copies of a module?");
 			}
 			Mainframe = mainframe;
-			return true;
 		}
 			
 	}

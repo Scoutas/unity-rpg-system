@@ -22,7 +22,7 @@ namespace Module{
 
 	enum ItemSystemTypes { DEFAULT, PROPERTY_CREATOR, PROPERTY_EDITOR, ITEM_EDITOR};
 
-	public class ItemSystem : Editor.Module {
+	public class ItemSystem : RPSystem.MainframeModule {
 
 		#region Information
 		

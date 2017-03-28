@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using RPSystem;
 
 namespace Module{
 	
-	public class Information : Editor.Module {
+	public class Information : MainframeModule {
 
 		// TODO: Add settings, to each module here?
 		// e.g. You're in the Information module and you do the cool checks
@@ -52,7 +53,7 @@ namespace Module{
 
 		#endregion
 
-		Editor.Module selectedModule = null;
+		RPSystem.MainframeModule selectedModule = null;
 		bool information = false;
 		bool versionHistory = false;
 	
@@ -64,7 +65,7 @@ namespace Module{
 
 			EditorGUILayout.LabelField ("Currently loaded modules: ", EditorStyles.boldLabel);
 
-			foreach (Editor.Module module in base.Mainframe.loadedModules) {
+			foreach (MainframeModule module in base.Mainframe.Loader.Modules) {
 				EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth(false));
 				EditorGUILayout.LabelField (module.Name + " :: Version " + module.CurrentVersion);
 				if (GUILayout.Button ("Information")) {
