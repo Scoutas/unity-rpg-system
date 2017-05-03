@@ -6,8 +6,9 @@ using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Xml;
 using System.IO;
+using Module.Factory;
 
-namespace Module.ItemType
+namespace Module.ItemTypes
 {
     public class ItemTypeDatabase : MonoBehaviour
     {

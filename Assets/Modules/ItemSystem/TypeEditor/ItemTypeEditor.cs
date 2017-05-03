@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Module.Factory;
 
 
 using System;
 
-namespace Module.ItemType
+namespace Module.ItemTypes
 {
     public class ItemTypeEditor : EditorWindow
     {

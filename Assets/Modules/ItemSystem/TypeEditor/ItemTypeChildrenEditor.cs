@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Module.ItemType
+namespace Module.ItemTypes
 {
     public class ItemTypeChildrenEditor : EditorWindow
     {

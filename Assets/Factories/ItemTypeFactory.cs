@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Module.ItemTypes;
 
-namespace Module.ItemType
+namespace Module.Factory
 {
     public class ItemTypeFactory
     {

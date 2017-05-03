@@ -9,7 +9,7 @@ using System.Linq;
 namespace RPSystem{
 	public partial class MainFrame : EditorWindow {
 		
-		static MainFrame window;
+		public static MainFrame window;
 		public ModuleLoader Loader { get; protected set; }
 		MainframeModule currentActiveModule = null;
 
@@ -23,6 +23,8 @@ namespace RPSystem{
 				currentActiveModule.Main ();
 			}
 		}
+
+ 
 
 
 

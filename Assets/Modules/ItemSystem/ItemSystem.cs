@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Module.ItemType;
+using Module.ItemTypes;
 
 using System;
 using System.IO;

@@ -12,7 +12,7 @@ namespace RPSystem{
 		private MainFrame _parent { get; set;}
 		private List<MainframeModule> _modules { get; set; }
 
-		public IEnumerable Modules{ get { return _modules; } }
+		public List<MainframeModule> Modules{ get { return _modules; } }
 		public int Count { get { return _modules.Count; } }
 		public MainframeModule GetModuleAtIndex(int index){ return _modules [index]; }
 

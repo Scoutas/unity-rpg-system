@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using RPSystem;
-using Module.Display;
+using Module.Display.Information;
+using Module.Factory;
 
 namespace Module{
 	
@@ -16,8 +17,6 @@ namespace Module{
 		//		like the names of the databases and etc.
 
 		#region Information
-
-		Vector2 scrollPosition;
 
 		public override string Name {
 			get {
@@ -55,55 +54,28 @@ namespace Module{
 			}
 		}
 
-		#endregion
+        #endregion
 
-		BaseDisplay currentDisplay;
-	
+        DisplayModule m_mainDisplay;
+        DisplayModuleFactory m_factory;
+        
+        public Information()
+        {
+            if(m_factory == null)
+            {
+                m_factory = new DisplayModuleFactory();
+            }
+        }
+        
 		public override void Main ()
-		{	
-			EditorGUILayout.BeginHorizontal ();
-
-			EditorGUILayout.BeginVertical ("Box", GUILayout.Width(400), GUILayout.ExpandHeight(true));
-
-			EditorGUILayout.LabelField ("Currently loaded modules: ", EditorStyles.boldLabel);
-
-			DisplayButtonsHorizontal ();
-
-			EditorGUILayout.EndVertical ();
-
-			DisplayTextBox ();
-
-			EditorGUILayout.EndHorizontal ();
-
+		{
+            if(m_mainDisplay == null)
+            {
+                m_mainDisplay = m_factory.BuildMainInformationDisplay(
+                    m_factory.BuildModuleDisplay(MainframeInstance.Loader.Modules),
+                    m_factory.BuildModuleInformationDisplay());
+            }
+            m_mainDisplay.Display();
 		}
-
-		void DisplayTextBox(){
-			EditorGUILayout.BeginVertical ("Box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-			if (currentDisplay != null) {
-				currentDisplay.Display ();
-			}
-			EditorGUILayout.EndVertical ();
-		}
-			
-
-		void DisplayButtonsHorizontal(){
-			foreach (MainframeModule module in base.Mainframe.Loader.Modules) {
-				EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth(false));
-				EditorGUILayout.LabelField (module.Name + " :: Version " + module.CurrentVersion);
-
-				if (GUILayout.Button ("Information")) {
-
-					currentDisplay = new BaseDisplay(module.Description);
-				}
-				if (GUILayout.Button ("Version History")) {
-
-					currentDisplay = new BaseDisplay (module.VersionHistory);
-				}
-
-				EditorGUILayout.EndHorizontal ();
-			}
-		}
-
-	}
-		
+	}	
 }

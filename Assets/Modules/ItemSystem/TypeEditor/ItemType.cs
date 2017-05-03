@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Module.ItemType
+namespace Module.ItemTypes
 {
     public class ItemType
     {
