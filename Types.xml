@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ItemTypeEditor>
+<ItemTypeDatabase>
   <Type Name="Weapon" />
   <Type Name="Melee" />
   <Type Name="Sord" />
@@ -7,4 +7,4 @@
   <TypeChild Parent="Weapon">Melee</TypeChild>
   <TypeChild Parent="Melee">Sord</TypeChild>
   <TypeChild Parent="Melee">Dagger</TypeChild>
-</ItemTypeEditor>
+</ItemTypeDatabase>

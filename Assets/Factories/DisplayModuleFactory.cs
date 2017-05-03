@@ -4,6 +4,8 @@ using UnityEngine;
 using RPSystem;
 using Module.Display.Information;
 using Module.Display.Mainframe;
+using Module.Display.ItemSystem;
+using Module.Submodule;
 
 namespace Module.Factory
 {
@@ -25,9 +27,19 @@ namespace Module.Factory
             return new InformationDisplay();
         }
 
-        public static MainframeDisplay BuildMainframeDisplay(Mainframe parent, List<MainframeModule> loadedModules)
+        public static MainframeDisplay BuildMainframeDisplay(List<MainframeModule> loadedModules)
         {
-            return new MainframeDisplay(parent, loadedModules);
+            return new MainframeDisplay(loadedModules);
+        }
+
+        public static ItemSystemButtonDisplay BuildItemSystemButtonDisplay(ItemSystem parent, List<ItemSystemSubModule> subModules)
+        {
+            return new ItemSystemButtonDisplay(parent, subModules);
+        }
+
+        public static ItemSystemDisplay BuildItemSystemDisplay(ItemSystemButtonDisplay itemSystemButtonDisplay)
+        {
+            return new ItemSystemDisplay(itemSystemButtonDisplay);
         }
 
 

@@ -12,7 +12,11 @@ namespace RPSystem{
 		public static Mainframe m_window;
         MainframeDisplay m_mainframeDisplay;
 
+
         ModuleLoader m_loader { get; set; }
+        public MainframeModule m_currentActiveModule = null;
+
+
         public List<MainframeModule> Modules {
             get {
                 if (m_loader == null) { throw new ArgumentNullException("Loader does not exist"); }
@@ -38,7 +42,7 @@ namespace RPSystem{
 		void OnEnable(){
 			
 			if (m_loader == null) { m_loader = new ModuleLoader ( this ); }
-            if (m_mainframeDisplay == null) { m_mainframeDisplay = DisplayModuleFactory.BuildMainframeDisplay(this, Modules); }
+            if (m_mainframeDisplay == null) { m_mainframeDisplay = DisplayModuleFactory.BuildMainframeDisplay(Modules); }
 		}
 
 

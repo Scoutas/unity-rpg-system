@@ -9,14 +9,12 @@ namespace Module.Display.Mainframe{
 	
 	public class MainframeDisplay: DisplayModule {
 
-        RPSystem.Mainframe m_parent;
         List<MainframeModule> m_modules;
 
         MainframeModule m_currentActiveModule = null;
 
-        public MainframeDisplay(RPSystem.Mainframe parent, List<MainframeModule> loadedModules)
+        public MainframeDisplay(List<MainframeModule> loadedModules)
         {
-            m_parent = parent;
             m_modules = loadedModules;
         }
 
@@ -24,7 +22,7 @@ namespace Module.Display.Mainframe{
         {
             EditorGUILayout.BeginHorizontal();
 
-            foreach (MainframeModule module in m_parent.Modules)
+            foreach (MainframeModule module in m_modules)
             {
                 EditorGUI.BeginDisabledGroup(module == m_currentActiveModule);
                 DisplayButton(module.Name, LoadUpModule, module);

@@ -10,14 +10,22 @@ using Module.Factory;
 
 namespace Module.ItemTypes
 {
-    public class ItemTypeDatabase : MonoBehaviour
+    public class ItemTypeDatabase : IXmlSerializable
     {
-        List<ItemType> itemTypeList;
-        ItemTypeFactory itemTypeFactory;
+        public List<ItemType> m_itemTypeList;
+        ItemTypeFactory m_itemTypeFactory;
+
 
         public ItemTypeDatabase(ItemTypeFactory factory)
         {
-            itemTypeFactory = factory;
+            m_itemTypeFactory = factory;
+            Load();
+
+        }
+
+        public ItemTypeDatabase()
+        {
+
         }
 
         // TODO: Make saving and loading be based on a path and a filename.
@@ -36,7 +44,7 @@ namespace Module.ItemTypes
             TextReader reader = new StreamReader("Types.xml");
             ItemTypeDatabase deserializedDatabase = serializer.Deserialize(reader) as ItemTypeDatabase;
             reader.Close();
-            itemTypeList = deserializedDatabase.itemTypeList;
+            m_itemTypeList = deserializedDatabase.m_itemTypeList;
         }
 
 
@@ -49,14 +57,17 @@ namespace Module.ItemTypes
 
         public void ReadXml(XmlReader reader)
         {
-            itemTypeList = new List<ItemType>();
+            m_itemTypeList = new List<ItemType>();
+            m_itemTypeFactory = new ItemTypeFactory();
+            Debug.Log(m_itemTypeList);
+            Debug.Log(m_itemTypeFactory);
 
             reader.Read();
 
             while (reader.MoveToAttribute("Name"))
             {
                 string name = reader.ReadContentAsString();
-                itemTypeList.Add(itemTypeFactory.CreateNewType(name));
+                m_itemTypeList.Add(m_itemTypeFactory.CreateNewType(name));
                 reader.Read();
             }
 
@@ -66,24 +77,24 @@ namespace Module.ItemTypes
                 reader.MoveToContent();
                 string childName = reader.ReadInnerXml();
 
-                int parentID = GetIDFromListByName(itemTypeList, parentName);
-                int childID = GetIDFromListByName(itemTypeList, childName);
+                int parentID = GetIDFromListByName(m_itemTypeList, parentName);
+                int childID = GetIDFromListByName(m_itemTypeList, childName);
 
-                itemTypeFactory.AddChildToType(itemTypeList[parentID], itemTypeList[childID]);
+                AddChildToType(m_itemTypeList[parentID], m_itemTypeList[childID]);
             }
 
         }
 
         public void WriteXml(XmlWriter writer)
         {
-            foreach (ItemType itemType in itemTypeList)
+            foreach (ItemType itemType in m_itemTypeList)
             {
                 writer.WriteStartElement("Type");
                 writer.WriteAttributeString("Name", itemType.Name);
                 writer.WriteEndElement();
             }
 
-            foreach (ItemType itemType in itemTypeList)
+            foreach (ItemType itemType in m_itemTypeList)
             {
                 foreach (ItemType itemTypeChild in itemType.Children)
                 {
@@ -108,6 +119,18 @@ namespace Module.ItemTypes
             }
             Debug.LogError(string.Format("There is no object in a list {0}, with name {1}", list, name));
             return 0;
+        }
+
+        public void AddChildToType(ItemType type, ItemType child)
+        {
+            if (type.Children.Contains(child))
+            {
+                string warningMessage = string.Format("The type {0} is already a child of type {1}.", child, type);
+                Debug.LogWarning(warningMessage);
+                return;
+            }
+
+            type.Children.Add(child);
         }
 
         #endregion
