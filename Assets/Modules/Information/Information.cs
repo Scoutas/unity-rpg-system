@@ -56,7 +56,7 @@ namespace Module{
 
         #endregion
 
-        DisplayModule m_mainDisplay;
+        MainDisplay m_mainDisplay;
         DisplayModuleFactory m_factory;
         
         public Information()
@@ -71,9 +71,9 @@ namespace Module{
 		{
             if(m_mainDisplay == null)
             {
-                m_mainDisplay = m_factory.BuildMainInformationDisplay(
-                    m_factory.BuildModuleDisplay(MainframeInstance.Loader.Modules),
-                    m_factory.BuildModuleInformationDisplay());
+                InformationDisplay informationDisplay = m_factory.BuildModuleInformationDisplay();
+                ModuleDisplay moduleDisplay = m_factory.BuildModuleDisplay(MainframeInstance.Loader.Modules, informationDisplay);
+                m_mainDisplay = m_factory.BuildMainInformationDisplay(moduleDisplay, informationDisplay);
             }
             m_mainDisplay.Display();
 		}

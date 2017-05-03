@@ -38,10 +38,19 @@ namespace Module{
 			}
 		}
 
+        public override string Description
+        {
+            get
+            {
+                return
+                    "It's the best description in the world. It's true.";
+            }
+        }
+
 
         #endregion
 
-        
+
         ItemTypeEditor itemTypeEditor;
         
         

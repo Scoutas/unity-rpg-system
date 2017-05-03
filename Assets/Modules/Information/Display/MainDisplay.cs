@@ -9,10 +9,10 @@ namespace Module.Display.Information
 
 	public class MainDisplay : DisplayModule {
 
-        DisplayModule m_moduleDisplay;
-        DisplayModule m_informationDisplay;
+        ModuleDisplay m_moduleDisplay;
+        InformationDisplay m_informationDisplay;
 
-        public MainDisplay(DisplayModule moduleDisplay, DisplayModule informationDisplay)
+        public MainDisplay(ModuleDisplay moduleDisplay, InformationDisplay informationDisplay)
         {
             m_moduleDisplay = moduleDisplay;
             m_informationDisplay = informationDisplay;

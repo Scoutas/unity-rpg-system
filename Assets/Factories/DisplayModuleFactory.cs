@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RPSystem;
+using Module.Display.Information;
 
 namespace Module.Factory
 {
     public class DisplayModuleFactory
     {
 
-        public DisplayModule BuildMainInformationDisplay(DisplayModule moduleDisplay, DisplayModule informationDisplay )
+        public MainDisplay BuildMainInformationDisplay(ModuleDisplay moduleDisplay, InformationDisplay informationDisplay)
         {
-            return new Display.Information.MainDisplay(moduleDisplay, informationDisplay);
+            return new MainDisplay(moduleDisplay, informationDisplay);
         }
 
-        public DisplayModule BuildModuleDisplay(List<MainframeModule> loadedModules)
+        public ModuleDisplay BuildModuleDisplay(List<MainframeModule> loadedModules, InformationDisplay informationDisplay)
         {
-            return new Display.Information.ModuleDisplay(loadedModules);
+            return new ModuleDisplay(loadedModules, informationDisplay);
         }
 
-        public DisplayModule BuildModuleInformationDisplay()
+        public InformationDisplay BuildModuleInformationDisplay()
         {
-            return new Display.Information.InformationDisplay();
+            return new InformationDisplay();
         }
 
 
