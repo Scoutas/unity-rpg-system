@@ -18,8 +18,10 @@ namespace RPSystem{
 
 		void OnGUI(){
 			
-			DrawPepe ();
-
+			DrawModuleButtons ();
+			if (currentActiveModule != null) {
+				currentActiveModule.Main ();
+			}
 		}
 
 
@@ -30,6 +32,7 @@ namespace RPSystem{
 		}
 
 		void OnEnable(){
+			
 			if (Loader == null) { Loader = new ModuleLoader ( this ); }
 		}
 

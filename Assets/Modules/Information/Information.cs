@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using RPSystem;
+using Module.Display;
 
 namespace Module{
 	
@@ -26,17 +27,20 @@ namespace Module{
 
 		public override string CurrentVersion {
 			get {
-				return "0.0.03";
+				return "0.0.04";
 			}
 		}
 
 		public override string VersionHistory {
 			get {
 				return
+					
+					"Information Module :: Version 0.0.04 \n" +
+						" + Refactoring \n\n" +
 					"Information Module :: Version 0.0.03 \n" +
-					" + Added a scroll bar for the text. \n\n" +
+						" + Added a scroll bar for the text. \n\n" +
 					"Information Module :: Version 0.0.02 \n" +
-					" + Added 'Information' \n\n" +
+						" + Added 'Information' \n\n" +
 					"Information Module :: Version 0.0.01 \n" +
 						" + Added 'Version History' \n" +
 						" + Initial setup";
@@ -45,7 +49,7 @@ namespace Module{
 
 		public override string Description {
 			get {
-				return "This is the information module. It should hold different sorts of information \n" +
+				return "This is the information module. It should hold different sorts of information " +
 					"about the modules that are loaded. For example, reason and usage of it.";
 					
 			}
@@ -53,9 +57,7 @@ namespace Module{
 
 		#endregion
 
-		RPSystem.MainframeModule selectedModule = null;
-		bool information = false;
-		bool versionHistory = false;
+		BaseDisplay currentDisplay;
 	
 		public override void Main ()
 		{	
@@ -65,47 +67,43 @@ namespace Module{
 
 			EditorGUILayout.LabelField ("Currently loaded modules: ", EditorStyles.boldLabel);
 
-			foreach (MainframeModule module in base.Mainframe.Loader.Modules) {
-				EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth(false));
-				EditorGUILayout.LabelField (module.Name + " :: Version " + module.CurrentVersion);
-				if (GUILayout.Button ("Information")) {
-					
-					versionHistory = false;
-					information = true;
-					selectedModule = module;
-				}
-				if (GUILayout.Button ("Version History")) {
-					information = false;
-					versionHistory = true;
-					selectedModule = module;
-
-				}
-				EditorGUILayout.EndHorizontal ();
-			}
+			DisplayButtonsHorizontal ();
 
 			EditorGUILayout.EndVertical ();
 
-			EditorGUILayout.BeginVertical ("Box", GUILayout.ExpandHeight (true), GUILayout.ExpandWidth (true));
-			if (selectedModule != null) {
-				using (var h = new GUILayout.VerticalScope ()) {
-					using (var scrollViewText = new GUILayout.ScrollViewScope (scrollPosition)) {
-						scrollPosition = scrollViewText.scrollPosition;
-						EditorGUI.BeginDisabledGroup (true);
-						if (versionHistory) {
-							EditorGUILayout.TextArea (selectedModule.VersionHistory);
-						} else if (information) {
-							EditorGUILayout.TextArea (selectedModule.Description);
-						}
-						EditorGUI.EndDisabledGroup ();
-					}
-				}
-			}
-			EditorGUILayout.EndVertical ();
+			DisplayTextBox ();
 
 			EditorGUILayout.EndHorizontal ();
 
 		}
+
+		void DisplayTextBox(){
+			EditorGUILayout.BeginVertical ("Box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+			if (currentDisplay != null) {
+				currentDisplay.Display ();
+			}
+			EditorGUILayout.EndVertical ();
+		}
 			
-		
+
+		void DisplayButtonsHorizontal(){
+			foreach (MainframeModule module in base.Mainframe.Loader.Modules) {
+				EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth(false));
+				EditorGUILayout.LabelField (module.Name + " :: Version " + module.CurrentVersion);
+
+				if (GUILayout.Button ("Information")) {
+
+					currentDisplay = new BaseDisplay(module.Description);
+				}
+				if (GUILayout.Button ("Version History")) {
+
+					currentDisplay = new BaseDisplay (module.VersionHistory);
+				}
+
+				EditorGUILayout.EndHorizontal ();
+			}
+		}
+
 	}
+		
 }

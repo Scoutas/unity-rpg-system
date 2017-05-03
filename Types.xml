@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ItemTypeEditor>
+  <Type Name="Weapon" />
+  <Type Name="Melee" />
+  <Type Name="Sord" />
+  <Type Name="Dagger" />
+  <TypeChild Parent="Weapon">Melee</TypeChild>
+  <TypeChild Parent="Melee">Sord</TypeChild>
+  <TypeChild Parent="Melee">Dagger</TypeChild>
+</ItemTypeEditor>

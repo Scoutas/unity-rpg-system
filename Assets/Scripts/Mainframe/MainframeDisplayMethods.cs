@@ -8,7 +8,7 @@ namespace RPSystem{
 	public partial class MainFrame {
 
 
-		void DrawPepe(){
+		void DrawModuleButtons(){
 			EditorGUILayout.BeginHorizontal ();
 			foreach (MainframeModule module in Loader.Modules) {
 				EditorGUI.BeginDisabledGroup (module == currentActiveModule);

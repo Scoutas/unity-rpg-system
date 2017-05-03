@@ -1,0 +1,11 @@
+Information Module :: Version 0.0.03
+	+ Added a scroll bar for the text.
+
+
+Information Module :: Version 0.0.02
+	+ Added 'Information'.
+
+
+Information Module :: Version 0.0.01
+	+ Added 'Version History'.
+	+ Initial setup.

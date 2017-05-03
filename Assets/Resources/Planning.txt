@@ -1,0 +1,29 @@
+Information Module
+	Jobs:
+		- Display information about each module that is loaded.
+		- Should have settings for general use.
+
+Item Module
+	Jobs:
+		- 
+
+<?xml version="1.0" encoding="utf-16"?>
+<ItemTypeEditor>
+  <Types>
+    <Type>
+      <Name>Weapon</Name>
+      <ChildrenType>Melee</ChildrenType>
+    </Type>
+    <Type>
+      <Name>Melee</Name>
+      <ChildrenType>Sword</ChildrenType>
+      <ChildrenType>Dagger</ChildrenType>
+    </Type>
+    <Type>
+      <Name>Sword</Name>
+    </Type>
+    <Type>
+      <Name>Dagger</Name>
+    </Type>
+  </Types>
+</ItemTypeEditor>
