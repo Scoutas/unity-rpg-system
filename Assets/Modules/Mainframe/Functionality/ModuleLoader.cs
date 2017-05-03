@@ -9,14 +9,14 @@ using UnityEditor;
 namespace RPSystem{
 	public class ModuleLoader {
 
-		private MainFrame _parent { get; set;}
+		private Mainframe _parent { get; set;}
 		private List<MainframeModule> _modules { get; set; }
 
 		public List<MainframeModule> Modules{ get { return _modules; } }
 		public int Count { get { return _modules.Count; } }
 		public MainframeModule GetModuleAtIndex(int index){ return _modules [index]; }
 
-		public ModuleLoader(MainFrame parent){
+		public ModuleLoader(Mainframe parent){
 			_parent = parent;
 			_modules = new List<MainframeModule>();
 			LoadModules ();

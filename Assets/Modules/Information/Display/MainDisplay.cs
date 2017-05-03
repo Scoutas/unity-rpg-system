@@ -11,6 +11,7 @@ namespace Module.Display.Information
 
         ModuleDisplay m_moduleDisplay;
         InformationDisplay m_informationDisplay;
+        float moduleDisplayWidth = 400f;
 
         public MainDisplay(ModuleDisplay moduleDisplay, InformationDisplay informationDisplay)
         {
@@ -21,6 +22,7 @@ namespace Module.Display.Information
 
         public override void Display()
         {
+            EditorGUILayout.LabelField("Loaded Modules:", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
 
@@ -33,7 +35,7 @@ namespace Module.Display.Information
 
         void DisplayLoadedModules()
         {
-            EditorGUILayout.BeginVertical("Box", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+            EditorGUILayout.BeginVertical("Box", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(false), GUILayout.Width(moduleDisplayWidth));
             m_moduleDisplay.Display();
             EditorGUILayout.EndVertical();
         }

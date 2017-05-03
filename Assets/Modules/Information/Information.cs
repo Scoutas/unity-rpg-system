@@ -26,15 +26,16 @@ namespace Module{
 
 		public override string CurrentVersion {
 			get {
-				return "0.0.04";
+				return "0.1.01";
 			}
 		}
 
 		public override string VersionHistory {
 			get {
 				return
-					
-					"Information Module :: Version 0.0.04 \n" +
+                    "Information Module :: Version 0.1.01 \n" +
+                        " + Updated the module to use DisplayModule modules for display.\n\n" +
+                    "Information Module :: Version 0.0.04 \n" +
 						" + Refactoring \n\n" +
 					"Information Module :: Version 0.0.03 \n" +
 						" + Added a scroll bar for the text. \n\n" +
@@ -57,23 +58,15 @@ namespace Module{
         #endregion
 
         MainDisplay m_mainDisplay;
-        DisplayModuleFactory m_factory;
         
-        public Information()
-        {
-            if(m_factory == null)
-            {
-                m_factory = new DisplayModuleFactory();
-            }
-        }
-        
+ 
 		public override void Main ()
 		{
             if(m_mainDisplay == null)
             {
-                InformationDisplay informationDisplay = m_factory.BuildModuleInformationDisplay();
-                ModuleDisplay moduleDisplay = m_factory.BuildModuleDisplay(MainframeInstance.Loader.Modules, informationDisplay);
-                m_mainDisplay = m_factory.BuildMainInformationDisplay(moduleDisplay, informationDisplay);
+                InformationDisplay informationDisplay = DisplayModuleFactory.BuildModuleInformationDisplay();
+                ModuleDisplay moduleDisplay = DisplayModuleFactory.BuildModuleDisplay(MainframeInstance.Modules, informationDisplay);
+                m_mainDisplay = DisplayModuleFactory.BuildMainInformationDisplay(moduleDisplay, informationDisplay);
             }
             m_mainDisplay.Display();
 		}

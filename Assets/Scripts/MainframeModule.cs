@@ -7,7 +7,7 @@ using System;
 namespace RPSystem{
 	public class MainframeModule {
 
-		public MainFrame MainframeInstance { get; private set;}
+		public Mainframe MainframeInstance { get; private set;}
 
 		public virtual string Name
         {
@@ -47,7 +47,7 @@ namespace RPSystem{
         }
 
 
-        public void SetMainframe(MainFrame mainframe){
+        public void SetMainframe(Mainframe mainframe){
 			if (MainframeInstance != null) {
 				Debug.LogWarning ("Mainframe parent of module " + Name + " has already been set. Could you possibly have several copies of a module?");
 			}

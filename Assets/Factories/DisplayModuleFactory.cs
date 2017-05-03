@@ -3,25 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using RPSystem;
 using Module.Display.Information;
+using Module.Display.Mainframe;
 
 namespace Module.Factory
 {
-    public class DisplayModuleFactory
+    public static class DisplayModuleFactory
     {
 
-        public MainDisplay BuildMainInformationDisplay(ModuleDisplay moduleDisplay, InformationDisplay informationDisplay)
+        public static MainDisplay BuildMainInformationDisplay(ModuleDisplay moduleDisplay, InformationDisplay informationDisplay)
         {
             return new MainDisplay(moduleDisplay, informationDisplay);
         }
 
-        public ModuleDisplay BuildModuleDisplay(List<MainframeModule> loadedModules, InformationDisplay informationDisplay)
+        public static ModuleDisplay BuildModuleDisplay(List<MainframeModule> loadedModules, InformationDisplay informationDisplay)
         {
             return new ModuleDisplay(loadedModules, informationDisplay);
         }
 
-        public InformationDisplay BuildModuleInformationDisplay()
+        public static InformationDisplay BuildModuleInformationDisplay()
         {
             return new InformationDisplay();
+        }
+
+        public static MainframeDisplay BuildMainframeDisplay(Mainframe parent, List<MainframeModule> loadedModules)
+        {
+            return new MainframeDisplay(parent, loadedModules);
         }
 
 
