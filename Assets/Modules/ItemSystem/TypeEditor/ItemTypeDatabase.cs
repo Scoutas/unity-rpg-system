@@ -6,26 +6,29 @@ using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Xml;
 using System.IO;
-using Module.Factory;
+using Module.Factory.ItemSystem;
 
-namespace Module.ItemTypes
+namespace Module.Submodule.ItemTypes
 {
     public class ItemTypeDatabase : IXmlSerializable
     {
-        public List<ItemType> m_itemTypeList;
-        //ItemTypeFactory m_itemTypeFactory;
+        List<ItemType> m_itemTypeList;
+        ItemTypeFactory m_itemTypeFactory;
 
 
-        public ItemTypeDatabase(string topkeke)
+        public ItemTypeDatabase(ItemTypeFactory itemTypeFactory)
         {
-            //Load();
+            m_itemTypeFactory = itemTypeFactory;
+            Load();
 
         }
 
-        public ItemTypeDatabase()
-        {
+        public List<ItemType> LoadedItemTypes { get { return m_itemTypeList; } }
 
-        }
+
+
+
+        
 
         // TODO: Make saving and loading be based on a path and a filename.
 
@@ -49,6 +52,11 @@ namespace Module.ItemTypes
 
         #region Serialization
 
+        public ItemTypeDatabase()
+        {
+            // This is here for serialization purposes.
+        }
+
         public XmlSchema GetSchema()
         {
             return null;
@@ -57,16 +65,14 @@ namespace Module.ItemTypes
         public void ReadXml(XmlReader reader)
         {
             m_itemTypeList = new List<ItemType>();
-            //m_itemTypeFactory = new ItemTypeFactory();
-            Debug.Log(m_itemTypeList);
-            //Debug.Log(m_itemTypeFactory);
-
+            m_itemTypeFactory = new ItemTypeFactory();
+            
             reader.Read();
 
             while (reader.MoveToAttribute("Name"))
             {
                 string name = reader.ReadContentAsString();
-                //m_itemTypeList.Add(m_itemTypeFactory.CreateNewType(name));
+                m_itemTypeList.Add(m_itemTypeFactory.CreateNewType(name));
                 reader.Read();
             }
 

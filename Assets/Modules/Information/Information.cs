@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using RPSystem;
 using Module.Display.Information;
-using Module.Factory;
+using Module.Factory.Display;
 
 namespace Module{
 	
@@ -62,6 +62,7 @@ namespace Module{
 
         public Information()
         {
+            Debug.Log(Name + " module :: Reflection construction");
             if (m_factory == null) { m_factory = new InformationDisplayModuleFactory(); }
             if (m_mainDisplay == null) { m_mainDisplay = m_factory.BuildMainInformationDisplay(this); }
         }
@@ -72,9 +73,5 @@ namespace Module{
             m_mainDisplay.Display();
 		}
 
-        void OnEnable()
-        {
-            
-        }
 	}	
 }

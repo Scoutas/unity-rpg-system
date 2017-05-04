@@ -37,7 +37,8 @@ namespace RPSystem{
 
 		[MenuItem("Role Playing System/Editor")]
 		static void Initialize(){
-			m_window = EditorWindow.GetWindow (typeof(Mainframe)) as Mainframe;
+            Debug.Log("Mainframe :: Initialization");
+            m_window = EditorWindow.GetWindow (typeof(Mainframe)) as Mainframe;
 		}
 
 		void OnEnable(){

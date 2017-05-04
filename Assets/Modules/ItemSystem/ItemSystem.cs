@@ -8,7 +8,8 @@ using System;
 using System.IO;
 using Module.Display.ItemSystem;
 using Module.Submodule;
-using Module.Factory;
+using Module.Submodule.ItemTypes;
+using Module.Factory.Display;
 
 
 
@@ -48,18 +49,34 @@ namespace Module{
 
 
         List<ItemSystemSubModule> m_subModules;
-        public ItemSystemDisplay m_itemSystemDisplay;
+        ItemSystemDisplayModuleFactory m_factory;
+        ItemSystemDisplay m_itemSystemDisplay;
 
         string currentNewText = "";
 
 
         public ItemSystem(){
 			Debug.Log (Name + " module :: Reflection construction");
-		}
+            if(m_factory == null) { m_factory = new ItemSystemDisplayModuleFactory(); }
+            if(m_itemSystemDisplay == null) { m_itemSystemDisplay = m_factory.BuildItemSystemDisplay(this); }
+            m_subModules = new List<ItemSystemSubModule> {
+                new ItemTypeEditorSubmodule(this, m_factory)
+            };
+        }
 
         public override void Main()
         {
             m_itemSystemDisplay.Display();
+        }
+
+        public List<ItemSystemSubModule> GetSubModules()
+        {
+            return m_subModules;
+        }
+
+        public ItemSystemSubModule GetSubModuleByIndex(int index)
+        {
+            return m_subModules[index];
         }
 
 

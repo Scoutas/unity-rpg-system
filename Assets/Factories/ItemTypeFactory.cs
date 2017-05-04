@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Module.ItemTypes;
+using Module.Submodule.ItemTypes;
 
 namespace Module.Factory.ItemSystem
 {
@@ -11,16 +11,13 @@ namespace Module.Factory.ItemSystem
 
         public ItemType CreateNewType(string name)
         {
-            ItemType newType = new ItemType();
-            newType.Name = name;
+            ItemType newType = new ItemType() { Name = name };
             return newType;
         }
 
         public ItemType CreateNewType(string name, List<ItemType> children)
         {
-            ItemType newType = new ItemType();
-            newType.Name = name;
-            newType.Children = children;
+            ItemType newType = new ItemType() { Name = name, Children = children };
             return newType;
         }
 
