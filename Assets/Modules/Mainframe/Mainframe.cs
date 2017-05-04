@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using Module.Display.Mainframe;
-using Module.Factory;
+using Module.Factory.Display;
 
 namespace RPSystem{
 	public class Mainframe : EditorWindow {
 		
 		public static Mainframe m_window;
         MainframeDisplay m_mainframeDisplay;
+        MainframeDisplayModuleFactory m_displayFactory;
 
 
         ModuleLoader m_loader { get; set; }
@@ -42,7 +43,8 @@ namespace RPSystem{
 		void OnEnable(){
 			
 			if (m_loader == null) { m_loader = new ModuleLoader ( this ); }
-            if (m_mainframeDisplay == null) { m_mainframeDisplay = DisplayModuleFactory.BuildMainframeDisplay(Modules); }
+            if (m_displayFactory == null) { m_displayFactory = new MainframeDisplayModuleFactory(); }
+            if (m_mainframeDisplay == null) { m_mainframeDisplay = m_displayFactory.BuildMainframeDisplay(this); }
 		}
 
 

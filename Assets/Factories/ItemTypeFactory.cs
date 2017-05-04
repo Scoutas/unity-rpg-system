@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Module.ItemTypes;
 
-namespace Module.Factory
+namespace Module.Factory.ItemSystem
 {
     public class ItemTypeFactory
     {

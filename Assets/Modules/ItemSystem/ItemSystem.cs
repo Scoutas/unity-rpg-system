@@ -55,14 +55,6 @@ namespace Module{
 
         public ItemSystem(){
 			Debug.Log (Name + " module :: Reflection construction");
-            if(m_subModules == null) { m_subModules = new List<ItemSystemSubModule>(); }
-            m_subModules.Add(new ItemTypeEditor());
-            if(m_itemSystemDisplay == null) {
-                m_itemSystemDisplay = DisplayModuleFactory.BuildItemSystemDisplay(
-                    DisplayModuleFactory.BuildItemSystemButtonDisplay(this, m_subModules)
-                    );
-            }
-            
 		}
 
         public override void Main()

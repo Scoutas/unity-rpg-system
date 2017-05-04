@@ -7,8 +7,11 @@ using UnityEditor;
 
 namespace Module.Display.ItemSystem
 {
-    public class ItemSystemDisplay : DisplayModule
+    public class ItemSystemDisplay : DisplayModule<Module.ItemSystem>
     {
+
+        Module.ItemSystem m_parent;
+        public override Module.ItemSystem Parent { get { return m_parent; } }
         List<ItemSystemSubModule> m_subModules;
         public ItemSystemSubModule m_currentlyActiveSubModule;
         ItemSystemButtonDisplay m_itemSystemButtonDisplay;

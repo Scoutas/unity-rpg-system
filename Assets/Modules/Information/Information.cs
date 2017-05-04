@@ -58,17 +58,23 @@ namespace Module{
         #endregion
 
         MainDisplay m_mainDisplay;
+        InformationDisplayModuleFactory m_factory;
+
+        public Information()
+        {
+            if (m_factory == null) { m_factory = new InformationDisplayModuleFactory(); }
+            if (m_mainDisplay == null) { m_mainDisplay = m_factory.BuildMainInformationDisplay(this); }
+        }
         
  
 		public override void Main ()
 		{
-            if(m_mainDisplay == null)
-            {
-                InformationDisplay informationDisplay = DisplayModuleFactory.BuildModuleInformationDisplay();
-                ModuleDisplay moduleDisplay = DisplayModuleFactory.BuildModuleDisplay(MainframeInstance.Modules, informationDisplay);
-                m_mainDisplay = DisplayModuleFactory.BuildMainInformationDisplay(moduleDisplay, informationDisplay);
-            }
             m_mainDisplay.Display();
 		}
+
+        void OnEnable()
+        {
+            
+        }
 	}	
 }

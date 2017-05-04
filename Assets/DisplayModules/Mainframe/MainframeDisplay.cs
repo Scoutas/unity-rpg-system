@@ -5,24 +5,26 @@ using UnityEditor;
 using RPSystem;
 using System;
 
-namespace Module.Display.Mainframe{
-	
-	public class MainframeDisplay: DisplayModule {
+namespace Module.Display.Mainframe {
 
-        List<MainframeModule> m_modules;
+    public class MainframeDisplay : DisplayModule<RPSystem.Mainframe> {
+
+        RPSystem.Mainframe m_parent;
+
+        public override RPSystem.Mainframe Parent { get { return m_parent; } }
+
+        public MainframeDisplay(RPSystem.Mainframe parent)
+        {
+            m_parent = parent;
+        }
 
         MainframeModule m_currentActiveModule = null;
-
-        public MainframeDisplay(List<MainframeModule> loadedModules)
-        {
-            m_modules = loadedModules;
-        }
 
         public override void Display()
         {
             EditorGUILayout.BeginHorizontal();
 
-            foreach (MainframeModule module in m_modules)
+            foreach (MainframeModule module in m_parent.Modules)
             {
                 EditorGUI.BeginDisabledGroup(module == m_currentActiveModule);
                 DisplayButton(module.Name, LoadUpModule, module);

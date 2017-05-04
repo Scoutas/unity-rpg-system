@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Module.Factory;
 using Module.Submodule;
-
+using Module.Display.TypeEditor;
 
 using System;
 
@@ -15,27 +15,19 @@ namespace Module.ItemTypes
 
         public override string Name { get { return "Item Type Editor"; } }
 
-        ItemTypeDatabase itemTypeDatabase;
+        ItemTypeDatabase m_itemTypeDatabase;
+        ItemTypeEditorDisplay m_itemTypeEditorDisplay;
         
 
         public ItemTypeEditor()
         {
-            itemTypeDatabase = new ItemTypeDatabase(new ItemTypeFactory());
+            //m_itemTypeDatabase = new ItemTypeDatabase(new ItemTypeFactory());
+            m_itemTypeEditorDisplay = new ItemTypeEditorDisplay();
         }
 
         public override void Main()
         {
-            EditorGUILayout.BeginVertical("Box");
-            foreach (ItemType itemType in itemTypeDatabase.m_itemTypeList)
-            {
-                string full = itemType.Name + " :: Child types: ";
-                foreach(ItemType childType in itemType.Children)
-                {
-                    full += childType.Name + " | ";
-                }
-                EditorGUILayout.LabelField(full);
-            }
-            EditorGUILayout.EndVertical();
+           
         }
 
         

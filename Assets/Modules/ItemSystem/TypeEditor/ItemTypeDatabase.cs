@@ -13,13 +13,12 @@ namespace Module.ItemTypes
     public class ItemTypeDatabase : IXmlSerializable
     {
         public List<ItemType> m_itemTypeList;
-        ItemTypeFactory m_itemTypeFactory;
+        //ItemTypeFactory m_itemTypeFactory;
 
 
-        public ItemTypeDatabase(ItemTypeFactory factory)
+        public ItemTypeDatabase(string topkeke)
         {
-            m_itemTypeFactory = factory;
-            Load();
+            //Load();
 
         }
 
@@ -58,16 +57,16 @@ namespace Module.ItemTypes
         public void ReadXml(XmlReader reader)
         {
             m_itemTypeList = new List<ItemType>();
-            m_itemTypeFactory = new ItemTypeFactory();
+            //m_itemTypeFactory = new ItemTypeFactory();
             Debug.Log(m_itemTypeList);
-            Debug.Log(m_itemTypeFactory);
+            //Debug.Log(m_itemTypeFactory);
 
             reader.Read();
 
             while (reader.MoveToAttribute("Name"))
             {
                 string name = reader.ReadContentAsString();
-                m_itemTypeList.Add(m_itemTypeFactory.CreateNewType(name));
+                //m_itemTypeList.Add(m_itemTypeFactory.CreateNewType(name));
                 reader.Read();
             }
 

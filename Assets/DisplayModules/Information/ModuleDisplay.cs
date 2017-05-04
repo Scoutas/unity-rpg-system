@@ -7,22 +7,23 @@ using RPSystem;
 
 namespace Module.Display.Information
 {
-    public class ModuleDisplay: DisplayModule
+    public class ModuleDisplay: DisplayModule<MainDisplay>
     {
-        List<MainframeModule> m_loadedModules;
-        InformationDisplay m_informationDisplay;
 
-        public ModuleDisplay(List<MainframeModule> loadedModules, InformationDisplay informationDisplay)
+        MainDisplay m_parent;
+        public override MainDisplay Parent { get { return m_parent; } }
+
+
+        public ModuleDisplay(MainDisplay parent)
         {
-            m_loadedModules = loadedModules;
-            m_informationDisplay = informationDisplay;
+            m_parent = parent;
         }
 
         public override void Display()
         {
-            for (int i = 0; i < m_loadedModules.Count; i++)
+            for (int i = 0; i < ModuleCount; i++)
             {
-                DisplayModule(m_loadedModules[i]);
+                DisplayModule(GetModuleByIndex(i));
             }
         }
 
@@ -45,7 +46,17 @@ namespace Module.Display.Information
 
         void SendInformation(string information)
         {
-            m_informationDisplay.RecieveText(information);
+            Parent.Display_Information.RecieveText(information);
+        }
+
+        int ModuleCount
+        {
+           get { return Parent.Parent.MainframeInstance.Modules.Count; }
+        }
+
+        MainframeModule GetModuleByIndex(int index)
+        {
+            return Parent.Parent.MainframeInstance.Modules[index];
         }
     }
 }
